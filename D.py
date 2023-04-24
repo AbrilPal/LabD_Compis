@@ -60,14 +60,24 @@ def extract_tokens_from_yalex_file(file_path, tokens_d):
             token_rule = token_rule.replace("'", "").replace("return", "").strip()
             if token_rule in tokens_d:
                 tokens[token_name] = tokens_d[token_rule]
+                if token_rule in tokens.keys():
+                    tokens[token_rule] = tokens_d[token_rule]
             else:
-                tokens[token_name] = token_rule
+                if token_name in tokens_d:
+                    tokens[token_name] = tokens_d[token_name]
+                else:
+                    tokens[token_name] = token_rule
         else:
             token_rule = token_rule.replace("'", "")
             if token_rule in tokens_d:
                 tokens[token_name] = tokens_d[token_rule]
+                if token_rule in tokens.keys():
+                    tokens[token_rule] = tokens_d[token_rule]
             else:
-                tokens[token_name] = token_rule
+                if token_name in tokens_d:
+                    tokens[token_name] = tokens_d[token_name]
+                else:
+                    tokens[token_name] = token_rule
 
     rules = re.findall(r"rule\s+tokens\s+=\s+([\s\S]+?)(?=\nrule|\Z)", yalex_text)
 
@@ -87,17 +97,21 @@ def extract_tokens_from_yalex_file(file_path, tokens_d):
                                 token_rule = token_rule.replace("'", "").replace("return", "").strip()
                                 if token_rule in tokens_d:
                                     tokens[token_name] = tokens_d[token_rule]
+                                    if token_rule in tokens.keys():
+                                        tokens[token_rule] = tokens_d[token_rule]
                                 else:
-                                    tokens[token_name] = token_rule
+                                    if token_name in tokens_d:
+                                        tokens[token_name] = tokens_d[token_name]
+                                    else:
+                                        tokens[token_name] = token_rule
                             else:
                                 if token_rule in tokens_d:
                                     tokens[token_name] = tokens_d[token_rule]
-                                else:
-                                    tokens[token_name] = token_rule
-                        else:
-                            tokens[token_name] = token_name
+                                    if token_rule in tokens.keys():
+                                        tokens[token_rule] = tokens_d[token_rule]
 
     return tokens
+
 
 
 # Ejemplo de uso:
@@ -128,7 +142,7 @@ def lexer(input_str):
     return tokens_list
 
 # Ejemplo de uso
-input_str = "val7 i i + ()"
+input_str = "val7 i i + () "
 tokens_list = lexer(input_str)
 for token_name, token_value in tokens_list:
     if token_name == 'ID':
