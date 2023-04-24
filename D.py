@@ -145,7 +145,12 @@ def lexer(input_str):
     return tokens_list
 
 # Ejemplo de uso
-input_str = "val7 i i + () "
+file_path = 'entrada.txt'
+with open(file_path, 'r') as file:
+    input_str = file.read()
+
+tokens_list = lexer(input_str)
+# input_str = "val7 i i * ( +) "
 tokens_list = lexer(input_str)
 for token_name, token_value in tokens_list:
     if token_name == 'ID':
