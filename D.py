@@ -1,7 +1,7 @@
 import re
 
 # Definición de tokens
-tokens = {
+tokens_d = {
     'WHITESPACE': r'\s+',
     'ID': r'[A-Za-z][A-Za-z0-9]*',
     'NUMBER': r'\d+(\.\d+)?([Ee][+-]?\d+)?',
@@ -12,6 +12,21 @@ tokens = {
     'LPAREN': r'\(',
     'RPAREN': r'\)',
 }
+
+def merge_tokens(tokens, additional_tokens):
+    """
+    Función que combina dos diccionarios de tokens.
+
+    Args:
+        tokens (dict): Diccionario original de tokens.
+        additional_tokens (dict): Diccionario de tokens adicionales a agregar.
+
+    Returns:
+        dict: Diccionario combinado de tokens.
+    """
+    merged_tokens = tokens.copy()
+    merged_tokens.update(additional_tokens)
+    return merged_tokens
 
 def extract_tokens_from_yalex_file(file_path):
     """
@@ -64,6 +79,7 @@ def extract_tokens_from_yalex_file(file_path):
 
 # Ejemplo de uso:
 tokens = extract_tokens_from_yalex_file("archivo.yalex")
+tokens = merge_tokens(tokens, tokens_d)
 
 print(tokens)
 
@@ -89,7 +105,7 @@ def lexer(input_str):
     return tokens_list
 
 # Ejemplo de uso
-input_str = "3 i i "
+input_str = "3 i i + ()"
 tokens_list = lexer(input_str)
 for token_name, token_value in tokens_list:
     if token_name == 'ID':
