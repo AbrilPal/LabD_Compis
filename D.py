@@ -112,18 +112,21 @@ def extract_tokens_from_yalex_file(file_path, tokens_d):
 
     return tokens
 
-
-
 # Ejemplo de uso:
 tokens = extract_tokens_from_yalex_file("archivo.yalex", tokens_d)
 # tokens = merge_tokens(tokens, tokens_d)
 
-print(tokens)
+# print(tokens)
+print("    TOKENS YALEX")
+print()
 
 # Imprimir los tokens y sus reglas
 for token_name, token_rule in tokens.items():
     print("Token: %s : %s" % (token_name, token_rule))
 
+print()
+
+print("    ANALIZANDO ")
 def lexer(input_str):
     tokens_list = []
     while input_str:
@@ -148,5 +151,5 @@ for token_name, token_value in tokens_list:
     if token_name == 'ID':
         print("ID: {}".format(token_value))
     else:
-        print("Token: {} : {}".format(token_name, token_value))
+        print("Identifico el token: {} del input: {}".format(token_name, token_value))
 
