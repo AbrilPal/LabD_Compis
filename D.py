@@ -28,12 +28,14 @@ def merge_tokens(tokens, additional_tokens):
     merged_tokens.update(additional_tokens)
     return merged_tokens
 
-def extract_tokens_from_yalex_file(file_path):
+def extract_tokens_from_yalex_file(file_path, tokens_d):
     """
-    Función que extrae los tokens de una gramática en formato yalex desde un archivo.
+    Función que extrae los tokens de una gramática en formato yalex desde un archivo,
+    y reemplaza los tokens que contienen "return" por los tokens correspondientes en el diccionario.
 
     Args:
         file_path (str): Ruta del archivo yalex.
+        tokens_d (dict): Diccionario con los tokens y sus reglas a reemplazar.
 
     Returns:
         dict: Diccionario con los tokens y sus reglas.
@@ -54,8 +56,18 @@ def extract_tokens_from_yalex_file(file_path):
     tokens_def = re.findall(r"let\s+(\w+)\s+=\s+(.+)", yalex_text)
 
     for token_name, token_rule in tokens_def:
-        token_rule = token_rule.replace("'", "")
-        tokens[token_name] = token_rule
+        if "return" in token_rule:
+            token_rule = token_rule.replace("'", "").replace("return", "").strip()
+            if token_rule in tokens_d:
+                tokens[token_name] = tokens_d[token_rule]
+            else:
+                tokens[token_name] = token_rule
+        else:
+            token_rule = token_rule.replace("'", "")
+            if token_rule in tokens_d:
+                tokens[token_name] = tokens_d[token_rule]
+            else:
+                tokens[token_name] = token_rule
 
     rules = re.findall(r"rule\s+tokens\s+=\s+([\s\S]+?)(?=\nrule|\Z)", yalex_text)
 
@@ -68,18 +80,29 @@ def extract_tokens_from_yalex_file(file_path):
                 token_names = tokens_and_rules[0].split("|")
                 for token_name in token_names:
                     token_name = token_name.strip()
-                    if token_name:
+                    if token_name and token_name not in tokens.keys():
                         if len(tokens_and_rules) > 1:
                             token_rule = tokens_and_rules[1].split("}")[0].strip()
+                            if "return" in token_rule:
+                                token_rule = token_rule.replace("'", "").replace("return", "").strip()
+                                if token_rule in tokens_d:
+                                    tokens[token_name] = tokens_d[token_rule]
+                                else:
+                                    tokens[token_name] = token_rule
+                            else:
+                                if token_rule in tokens_d:
+                                    tokens[token_name] = tokens_d[token_rule]
+                                else:
+                                    tokens[token_name] = token_rule
                         else:
-                            raise ValueError("Error: No se pudo obtener la regla de token en la línea: {}".format(line))
-                        tokens[token_name] = token_rule
+                            tokens[token_name] = token_name
 
     return tokens
 
+
 # Ejemplo de uso:
-tokens = extract_tokens_from_yalex_file("archivo.yalex")
-tokens = merge_tokens(tokens, tokens_d)
+tokens = extract_tokens_from_yalex_file("archivo.yalex", tokens_d)
+# tokens = merge_tokens(tokens, tokens_d)
 
 print(tokens)
 
@@ -105,7 +128,7 @@ def lexer(input_str):
     return tokens_list
 
 # Ejemplo de uso
-input_str = "3 i i + ()"
+input_str = "val7 i i + ()"
 tokens_list = lexer(input_str)
 for token_name, token_value in tokens_list:
     if token_name == 'ID':
