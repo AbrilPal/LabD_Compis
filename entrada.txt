@@ -1,3 +1,5 @@
-val7 i i * ( +)
+varOne+var2two
+variableSimpleTres + (anotherVarFour4 * finalVariableFive)
 
-8 y
+id1 * (id2 + id3) + id4
+id1*(id2+id3)+id4
